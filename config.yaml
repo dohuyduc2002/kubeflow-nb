@@ -3,17 +3,6 @@ mlflow:
     access_key_id: minio
     secret_access_key: minio123
 
-jenkins:
-    user: admin
-    password: fde57cfe11ba4fd2ad66a66e9d780a92
-
-docker:
-    hub_user: microwave1005
-    hub_password: dckr_pat_4Abc94PsiLfJO6plJqISTZwk6-4
-
-github:
-    access_token: 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
-
 kubeflow:
     username: user@example.com
     password: "12341234"
