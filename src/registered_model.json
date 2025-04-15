@@ -1,0 +1,17 @@
+[
+    {
+        "registered_model_name": "v1_XGBoost",
+        "model_artifact_uri": "s3://mlflow/3/78c98ed125c24c728177d2ae9fc5c714/artifacts/model",
+        "version": "1"
+    },
+    {
+        "registered_model_name": "v1_XGBoost",
+        "model_artifact_uri": "s3://mlflow/3/c98807e92ee646bf991f711730d9a03f/artifacts/model",
+        "version": "2"
+    },
+    {
+        "registered_model_name": "v2_XGBoost",
+        "model_artifact_uri": "s3://mlflow/3/f18bd9d92aed49a79623080349846f14/artifacts/model",
+        "version": "1"
+    }
+]
