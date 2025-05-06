@@ -386,17 +386,17 @@ deploymentSpec:
           \ else \"LightGBM\"\n    run_name = f\"{version}_{run_tag}\"\n\n    with\
           \ mlflow.start_run(run_name=f\"{run_name}_run\") as run:\n        mlflow.log_params(best_params)\n\
           \        mlflow.log_metric(\"accuracy\", acc)\n        mlflow.log_artifact(shap_path,\
-          \       artifact_path=\"model_artifacts\")\n        mlflow.log_artifact(model_joblib.path,\
-          \ artifact_path=\"model_artifacts\")\n        if model_name.lower() == \"\
-          xgb\":\n            mlflow.xgboost.log_model(model, artifact_path=\"flavour\"\
-          )\n        else:\n            mlflow.lightgbm.log_model(model, artifact_path=\"\
-          flavour\")\n        uri = mlflow.get_artifact_uri(\"model_artifacts\")\n\
-          \        mlflow.register_model(uri, run_name)\n\n    # \u2500\u2500\u2500\
-          \ write registered URI for downstream steps \u2500\u2500\u2500\u2500\u2500\
+          \       artifact_path=\"metrics\")\n        mlflow.log_artifact(model_joblib.path,\
+          \ artifact_path=\"metrics\")\n        if model_name.lower() == \"xgb\":\n\
+          \            mlflow.xgboost.log_model(model)\n        else:\n          \
+          \  mlflow.lightgbm.log_model(model)\n        uri = mlflow.get_artifact_uri(\"\
+          model_artifacts\")\n        mlflow.register_model(uri, run_name)\n\n   \
+          \ # \u2500\u2500\u2500 write registered URI for downstream steps \u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
-          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    with open(registered_uri.path,\
-          \ \"w\") as f_out:\n        f_out.write(uri)\n\n    logger.success(\"Model\
-          \ training, logging, and registration complete\")\n\n"
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\n    with open(registered_uri.path, \"w\") as f_out:\n        f_out.write(uri)\n\
+          \n    logger.success(\"Model training, logging, and registration complete\"\
+          )\n\n"
         image: microwave1005/scipy-img:latest
     exec-preprocess-binning-component:
       container:

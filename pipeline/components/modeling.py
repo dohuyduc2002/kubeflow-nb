@@ -128,12 +128,12 @@ def modeling_component(
     with mlflow.start_run(run_name=f"{run_name}_run") as run:
         mlflow.log_params(best_params)
         mlflow.log_metric("accuracy", acc)
-        mlflow.log_artifact(shap_path,       artifact_path="model_artifacts")
-        mlflow.log_artifact(model_joblib.path, artifact_path="model_artifacts")
+        mlflow.log_artifact(shap_path,       artifact_path="metrics")
+        mlflow.log_artifact(model_joblib.path, artifact_path="metrics")
         if model_name.lower() == "xgb":
-            mlflow.xgboost.log_model(model, artifact_path="flavour")
+            mlflow.xgboost.log_model(model)
         else:
-            mlflow.lightgbm.log_model(model, artifact_path="flavour")
+            mlflow.lightgbm.log_model(model)
         uri = mlflow.get_artifact_uri("model_artifacts")
         mlflow.register_model(uri, run_name)
 
