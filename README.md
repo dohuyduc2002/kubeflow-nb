@@ -53,7 +53,7 @@ Please refer to the Kubeflow platform setup documented in my other repository:
 ### ✅ Enable Notebook to Run KFP
 When creating a namespace in Kubeflow, check the **"tickbox"** to allow Notebooks to access KFP.
 
-> 📌 *(Insert GIF here demonstrating the tickbox selection)*
+![Setup Notebook](media/setup_notebook.gif)
 
 ### 🛠 Git Configuration in Notebook
 
