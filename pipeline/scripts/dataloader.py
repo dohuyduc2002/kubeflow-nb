@@ -1,6 +1,7 @@
 from kfp import dsl
 from kfp.dsl import Output, Dataset
 from pathlib import Path
+import kfp.compiler as compiler
 import sys
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
@@ -34,9 +35,6 @@ def dataloader(
     print(f"Downloaded {object_name} to {output.path}")
 
 if __name__ == "__main__":
-    from pathlib import Path
-    import kfp.compiler as compiler
-
     # Define paths using pathlib
     current_dir = Path(__file__).parent
     components_dir = current_dir.parent / "components"

@@ -1,4 +1,5 @@
 from kfp import dsl
+import kfp.compiler as compiler
 from kfp.dsl import Input, Output, Dataset, Artifact
 from pathlib import Path
 import sys
@@ -43,7 +44,7 @@ def modeling(
     df = pd.read_csv(train_csv.path)
     X, y = df.drop("TARGET", axis=1), df["TARGET"]
 
-    mlflow.end_run()
+    mlflow.end_run()  # End the parent run to start a new one with the parent ID
     with mlflow.start_run(run_id=parent_id):
 
         def objective(trial):
@@ -132,8 +133,6 @@ def modeling(
 
 
 if __name__ == "__main__":
-    import kfp.compiler as compiler
-
     cur = Path(__file__).parent
     dst = cur.parent / "components"
     dst.mkdir(parents=True, exist_ok=True)

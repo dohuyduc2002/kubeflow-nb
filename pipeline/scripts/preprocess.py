@@ -1,4 +1,5 @@
 from kfp import dsl
+import kfp.compiler as compiler
 from kfp.dsl import Input, Output, Dataset, Artifact
 from pathlib import Path
 import sys
@@ -111,12 +112,12 @@ def preprocess(
         opt_binning_process.transform(X_train[survivors].values), columns=survivors
     )
 
-    # Due to test set does not have TARGET col, we cannot use iv 
+    # Due to test set does not have TARGET col, we cannot use iv
     df_test_binned = pd.DataFrame(
         opt_binning_process.transform(X_test[survivors].values), columns=survivors
     )
 
-    # Feature selection using anova F-test as a score function 
+    # Feature selection using anova F-test as a score function
     k = len(survivors) if n_features_to_select == "auto" else int(n_features_to_select)
     selector = SelectKBest(f_classif, k=k)
     selector.fit(df_train_binned.fillna(0), y)
@@ -175,8 +176,6 @@ def preprocess(
 
 
 if __name__ == "__main__":
-    from pathlib import Path
-    import kfp.compiler as compiler
 
     current_dir = Path(__file__).parent
     components_dir = current_dir.parent / "components"
