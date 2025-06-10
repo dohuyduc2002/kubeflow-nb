@@ -1,20 +1,21 @@
 import os
 from dotenv import load_dotenv
-from utils import upload_pipeline, MINIO_ENDPOINT, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_BUCKET_NAME, MLFLOW_ENDPOINT, KFP_NAMESPACE
+from utils import upload_pipeline
 from kfp import Client
 
+load_dotenv()
 
 if __name__ == "__main__":
 
     # Read MinIO settings from env
-    minio_endpoint = MINIO_ENDPOINT
-    minio_access_key = MINIO_ACCESS_KEY
-    minio_secret_key = MINIO_SECRET_KEY
-    bucket_name = MINIO_BUCKET_NAME
-    mlflow_endpoint = MLFLOW_ENDPOINT
-    namespace = KFP_NAMESPACE
+    minio_endpoint = os.environ["MINIO_ENDPOINT"]
+    minio_access_key = os.environ["MINIO_ACCESS_KEY"]
+    minio_secret_key = os.environ["MINIO_SECRET_KEY"]
+    bucket_name = os.environ["MINIO_BUCKET_NAME"]
+    mlflow_endpoint = os.environ["MLFLOW_ENDPOINT"]
+    namespace = os.getenv("KFP_NAMESPACE")
 
-    kfp_client = Client(host='http://ml-pipeline.kubeflow.svc.cluster.local:8888',verify_ssl=False)  
+    kfp_client = Client()  
     print("✅ Authenticated KFP client created.")
 
     # Define pipeline arguments

@@ -5,14 +5,6 @@ import requests
 import urllib3
 
 SCIPY_IMAGE = "microwave1005/scipy-img:latest"
-# MinIO configuration
-MINIO_ENDPOINT= "minio.minio.svc.cluster.local:9000"
-MINIO_ACCESS_KEY= "minio"
-MINIO_SECRET_KEY= "minio123"
-MINIO_BUCKET_NAME= "sample-data"
-
-MLFLOW_ENDPOINT= "mlflow.mlflow.svc.cluster.local:5000"
-KFP_NAMESPACE='kubeflow-user-example-com'
 
 def upload_pipeline(kfp_client, pipeline_yaml, pipeline_name, version_name):
 
