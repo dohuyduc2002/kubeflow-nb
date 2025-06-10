@@ -74,6 +74,8 @@ git config --global user.email "you@example.com"
 ```bash
 git remote set-url origin https://<github_username>:<access_token>@github.com/dohuyduc2002/git-underwrite-mlflow.git
 ```
+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
+git remote set-url origin https://dohuyduc2002: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@github.com/dohuyduc2002/git-underwrite-mlflow.git
 
 > Upon pushing changes, GitHub may prompt for your username and token as a password.
 

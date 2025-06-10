@@ -1,0 +1,58 @@
+import os
+from dotenv import load_dotenv
+from utils import upload_pipeline, MINIO_ENDPOINT, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_BUCKET_NAME, MLFLOW_ENDPOINT, KFP_NAMESPACE
+from kfp import Client
+
+
+if __name__ == "__main__":
+
+    # Read MinIO settings from env
+    minio_endpoint = MINIO_ENDPOINT
+    minio_access_key = MINIO_ACCESS_KEY
+    minio_secret_key = MINIO_SECRET_KEY
+    bucket_name = MINIO_BUCKET_NAME
+    mlflow_endpoint = MLFLOW_ENDPOINT
+    namespace = KFP_NAMESPACE
+
+    kfp_client = Client(host='http://ml-pipeline.kubeflow.svc.cluster.local:8888',verify_ssl=False)  
+    print("✅ Authenticated KFP client created.")
+
+    # Define pipeline arguments
+    pipeline_args = {
+        "minio_endpoint": minio_endpoint,
+        "minio_access_key": minio_access_key,
+        "minio_secret_key": minio_secret_key,
+        "bucket_name": bucket_name,
+        "mlflow_endpoint": mlflow_endpoint,
+        "raw_train_object": "data/application_train.csv",
+        "raw_test_object": "data/application_test.csv",
+        "dest_train_object": "preprocessed_train.csv",
+        "dest_test_object": "preprocessed_test.csv",
+        "parent_run_name": "xgb_optuna_search",
+        "n_features_to_select": "auto",
+        "data_version": "v1",
+        "model_name": "lgbm", #xgb or lgbm
+        "suffix": "underwrite",
+        "experiment_name": "Underwriting_kfp_lgbm",
+    }
+
+    pipeline_yaml = "pipeline.yaml"
+    pipeline_name = "lgbm_model"  # due to my code, the 1st version will be uploaded with this name and version_name
+    version_name = "v1"  # this version will be a reference for recurring runs in cicd
+
+    # Upload pipeline/version and get IDs
+    pipeline_id, version_id, version_name = upload_pipeline(
+        kfp_client, pipeline_yaml, pipeline_name, version_name
+    )
+
+    experiment = kfp_client.create_experiment(name="underwrite_experiment", namespace=namespace)
+    experiment_id = getattr(experiment, "experiment_id")
+
+    run = kfp_client.run_pipeline(
+        experiment_id=experiment_id,
+        job_name="Underwriting Model Job Run",
+        pipeline_id=pipeline_id,
+        version_id=version_id,
+        params=pipeline_args,
+    )
+    print("🚀 Pipeline run submitted:", run)
