@@ -17,7 +17,7 @@ This repository is designed to be used inside a Kubeflow Notebook. Its main purp
 ## 📁 Repository Structure
 
 ```text
-git-underwrite-mlflow/
+kubeflow-nb/
 ├── requirements.txt
 ├── README.md
 ├── config.yaml
@@ -72,12 +72,8 @@ git config --global user.email "you@example.com"
 3. **Set remote with token authentication:**
 
 ```bash
-git remote set-url origin https://<github_username>:<access_token>@github.com/dohuyduc2002/git-underwrite-mlflow.git
+git remote set-url origin https://<github_username>:<access_token>@github.com/dohuyduc2002/kubeflow-nb.git
 ```
-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
-git remote set-url origin https://dohuyduc2002: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@github.com/dohuyduc2002/git-underwrite-mlflow.git
-
-> Upon pushing changes, GitHub may prompt for your username and token as a password.
 
 ---
 
