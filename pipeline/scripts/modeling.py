@@ -1,5 +1,4 @@
 from kfp import dsl
-import kfp.compiler as compiler
 from kfp.dsl import Input, Output, Dataset, Artifact
 from pathlib import Path
 import sys
@@ -15,15 +14,17 @@ def modeling(
     model_joblib: Output[Artifact],
     registered_model: Output[Artifact],
     mlflow_run_id: Input[Artifact],
-    minio_endpoint: str,
-    minio_access_key: str,
-    minio_secret_key: str,
     mlflow_endpoint: str,
     experiment_name: str,
     model_name: str,
     suffix: str,
 ):
-    import os, json, optuna, shap, joblib, matplotlib.pyplot as plt
+    import os
+    import json 
+    import optuna 
+    import shap 
+    import joblib
+    import matplotlib.pyplot as plt
     import pandas as pd
     from pathlib import Path
     import mlflow, xgboost as xgb
@@ -31,28 +32,20 @@ def modeling(
     from sklearn.model_selection import train_test_split
     from sklearn.metrics import accuracy_score, classification_report
 
-    os.environ["MLFLOW_S3_ENDPOINT_URL"] = f"http://{minio_endpoint}"
-    os.environ["AWS_ACCESS_KEY_ID"] = minio_access_key
-    os.environ["AWS_SECRET_ACCESS_KEY"] = minio_secret_key
     os.environ["MLFLOW_ENDPOINT"] = f"http://{mlflow_endpoint}"
 
-    mlflow.set_tracking_uri(f"http://{mlflow_endpoint}")
-    mlflow.set_experiment(experiment_name)
+    def get_mlflow_parent_run(mlflow_endpoint, experiment_name, mlflow_run_id_path):
+        mlflow.set_tracking_uri(f"http://{mlflow_endpoint}")
+        mlflow.set_experiment(experiment_name)
+        parent_id: str = Path(mlflow_run_id_path).read_text().strip()
+        mlflow.end_run()  # ensure any existing run is closed
+        return parent_id
 
-    parent_id: str = Path(mlflow_run_id.path).read_text().strip()
-
-    df = pd.read_csv(train_csv.path)
-    X, y = df.drop("TARGET", axis=1), df["TARGET"]
-
-    mlflow.end_run()  # End the parent run to start a new one with the parent ID
-    with mlflow.start_run(run_id=parent_id):
-
+    def build_objective(X, y, model_name, suffix):
         def objective(trial):
             params = {
                 "max_depth": trial.suggest_int("max_depth", 2, 8),
-                "learning_rate": trial.suggest_float(
-                    "learning_rate", 1e-3, 0.3, log=True
-                ),
+                "learning_rate": trial.suggest_float("learning_rate", 1e-3, 0.3, log=True),
                 "n_estimators": trial.suggest_int("n_estimators", 100, 300),
                 "subsample": trial.suggest_float("subsample", 0.5, 1.0),
                 "colsample_bytree": trial.suggest_float("colsample_bytree", 0.5, 1.0),
@@ -109,12 +102,25 @@ def modeling(
 
             return acc
 
-        study = optuna.create_study(direction="maximize")
-        study.optimize(objective, n_trials=5)
+        return objective
 
+    def run_optuna_study(objective, n_trials=5):
+        study = optuna.create_study(direction="maximize")
+        study.optimize(objective, n_trials=n_trials)
         best_trial = study.best_trial
         best_run_id = best_trial.user_attrs["mlflow_run_id"]
+        return best_trial, best_run_id
 
+    # ===== Pipeline =====
+    parent_id = get_mlflow_parent_run(
+        mlflow_endpoint, experiment_name, mlflow_run_id.path
+    )
+    df = pd.read_csv(train_csv.path)
+    X, y = df.drop("TARGET", axis=1), df["TARGET"]
+
+    with mlflow.start_run(run_id=parent_id):
+        objective = build_objective(X, y, model_name, suffix)
+        best_trial, best_run_id = run_optuna_study(objective, n_trials=5)
         best_model_uri = f"runs:/{best_run_id}/model"
         registry = mlflow.register_model(best_model_uri, name=f"{model_name}_{suffix}")
 
@@ -133,6 +139,8 @@ def modeling(
 
 
 if __name__ == "__main__":
+    import kfp.compiler as compiler
+
     cur = Path(__file__).parent
     dst = cur.parent / "components"
     dst.mkdir(parents=True, exist_ok=True)

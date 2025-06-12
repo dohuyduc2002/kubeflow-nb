@@ -27,18 +27,15 @@ if __name__ == "__main__":
         "mlflow_endpoint": mlflow_endpoint,
         "raw_train_object": "data/application_train.csv",
         "raw_test_object": "data/application_test.csv",
-        "dest_train_object": "preprocessed_train.csv",
-        "dest_test_object": "preprocessed_test.csv",
         "parent_run_name": "xgb_optuna_search",
         "n_features_to_select": "auto",
-        "data_version": "v1",
-        "model_name": "lgbm", #xgb or lgbm
+        "model_name": "xgb", #xgb or lgbm
         "suffix": "underwrite",
-        "experiment_name": "Underwriting_kfp_lgbm",
+        "experiment_name": "Underwriting_kfp",
     }
 
     pipeline_yaml = "pipeline.yaml"
-    pipeline_name = "lgbm_model"  # due to my code, the 1st version will be uploaded with this name and version_name
+    pipeline_name = "xgb_model"  # due to my code, the 1st version will be uploaded with this name and version_name
     version_name = "v1"  # this version will be a reference for recurring runs in cicd
 
     # Upload pipeline/version and get IDs
