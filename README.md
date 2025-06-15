@@ -103,7 +103,7 @@ MINIO_SECRET_KEY=minio123
 MINIO_BUCKET_NAME=sample-data
 
 MLFLOW_ENDPOINT=mlflow.mlflow.svc.cluster.local:5000
-KFP_NAMESPACE='kubeflow-user-exmaple-com'
+KFP_NAMESPACE='kubeflow-user-example-com'
 ```
 
 Press `CTRL + X`, then `Y`, and finally `Enter` to save the file.
