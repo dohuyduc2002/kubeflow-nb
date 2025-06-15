@@ -15,6 +15,8 @@ def preprocess(
     output_train_csv: Output[Dataset],
     output_test_csv: Output[Dataset],
     mlflow_run_id: Output[Artifact],
+    minio_access_key: str,
+    minio_secret_key: str,
     mlflow_endpoint: str,
     parent_run_name: str,
     n_features_to_select: str,
@@ -30,6 +32,9 @@ def preprocess(
     from optbinning import BinningProcess
     from sklearn.feature_selection import SelectKBest, f_classif
 
+    os.environ["MLFLOW_S3_ENDPOINT_URL"] = f"http://{minio_endpoint}"
+    os.environ["AWS_ACCESS_KEY_ID"] = minio_access_key
+    os.environ["AWS_SECRET_ACCESS_KEY"] = minio_secret_key
     os.environ["MLFLOW_ENDPOINT"] = f"http://{mlflow_endpoint}"
 
     # Data processing functions

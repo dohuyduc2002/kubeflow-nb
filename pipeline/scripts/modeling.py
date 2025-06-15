@@ -14,6 +14,8 @@ def modeling(
     model_joblib: Output[Artifact],
     registered_model: Output[Artifact],
     mlflow_run_id: Input[Artifact],
+    minio_access_key: str,
+    minio_secret_key: str,
     mlflow_endpoint: str,
     experiment_name: str,
     model_name: str,
@@ -32,6 +34,9 @@ def modeling(
     from sklearn.model_selection import train_test_split
     from sklearn.metrics import accuracy_score, classification_report
 
+    os.environ["MLFLOW_S3_ENDPOINT_URL"] = f"http://{minio_endpoint}"
+    os.environ["AWS_ACCESS_KEY_ID"] = minio_access_key
+    os.environ["AWS_SECRET_ACCESS_KEY"] = minio_secret_key
     os.environ["MLFLOW_ENDPOINT"] = f"http://{mlflow_endpoint}"
 
     def get_mlflow_parent_run(mlflow_endpoint, experiment_name, mlflow_run_id_path):
